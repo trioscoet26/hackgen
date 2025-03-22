@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import Charts from "./charts";
 import ApproveReport from "./ApproveReport";
 import CreateListing from "./CreateListing";
-import History  from "./History"
-import { BarChart2, FileText, ShoppingBag, Map, Menu} from "lucide-react";
+import History from "./History";
+import { BarChart2, FileText, ShoppingBag, Map, Menu, X } from "lucide-react";
 
 function Sidebar({ setActiveComponent }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -34,10 +34,22 @@ function Sidebar({ setActiveComponent }) {
       {/* Sidebar */}
       <div
         className={`fixed inset-y-0 left-0 bg-black border-r border-gray-700 shadow-lg p-4 transition-transform duration-300 
-          ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 w-64 md:relative md:block`}
+          ${
+            isOpen ? "translate-x-0" : "-translate-x-full"
+          } md:translate-x-0 w-64 md:relative md:block`}
       >
+        {/* Close Button */}
+        {isOpen && (
+          <button
+            onClick={toggleSidebar}
+            className="absolute top-4 right-4 p-2 text-red-500 hover:text-red-700"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        )}
+
         <nav>
-          <ul className="space-y-4">
+          <ul className="space-y-4 mt-8">
             {menuItems.map((item) => (
               <li key={item.text}>
                 <button
@@ -60,13 +72,13 @@ const AdminDashboard = () => {
   const [activeComponent, setActiveComponent] = useState("Charts");
 
   return (
-    <div className="bg-black  flex ">
+    <div className="bg-black flex">
       <Sidebar setActiveComponent={setActiveComponent} />
-      <div className="flex-1 flex flex-col  bg-black">
-        <main className="flex-1  bg-black text-white px-8">
+      <div className="flex-1 flex flex-col bg-black">
+        <main className="flex-1 bg-black text-white px-8">
           {activeComponent === "Charts" && <Charts />}
           {activeComponent === "ApproveReport" && <ApproveReport />}
-          {activeComponent === "Marketplace" &&  <CreateListing />}
+          {activeComponent === "Marketplace" && <CreateListing />}
           {activeComponent === "History" && <History />}
         </main>
       </div>
