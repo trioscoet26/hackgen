@@ -1,10 +1,65 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
 export default function WorkerForm() {
-  return (
+  const url = import.meta.env.VITE_API_URL;
+  
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    department: '',
+    startDate: '',
+    shift: '',
+    gender: '',
+    age: '',
+    emergencyResponder: false, // Boolean field
+    additionalDetails: ''
+  });
 
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+        await axios.post(`${url}worker`, formData);
+        alert('Worker registered successfully!');
+        setFormData({
+            firstName: '',
+            lastName: '',
+            email: '',
+            phone: '',
+            department: '',
+            startDate: '',
+            shift: '',
+            gender: '',
+            age: '',
+            emergencyResponder: false,
+            additionalDetails: ''
+        });
+    } catch (error) {
+        // Display detailed error message from the server
+        const errorMessage = error.response?.data?.message || 'Error registering worker';
+        alert(errorMessage);
+        console.error('Error:', error);
+    } finally {
+        setIsLoading(false);
+    }
+};
+
+  return (
     <div className="py-20 bg-gray-50 dark:bg-neutral-900 text-white min-h-screen p-8">
-      {/* Header Section */}
       <div className="text-center mb-8">
         <div className="inline-block px-3 py-1 bg-teal-600 rounded-full text-sm mb-2">
           Personnel Management
@@ -15,20 +70,14 @@ export default function WorkerForm() {
         </p>
       </div>
       
-      {/* Main Content - Side by Side Layout */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Form Card - Takes 2/3 of the space */}
         <div className="lg:col-span-2">
-        <div className="bg-teal-600 dark:bg-teal-700 p-4 text-white rounded">
-
-        <h2 className="text-xl font-bold mb-4">Register New Worker</h2>
-        <p className="text-sm mb-4">Fill out the form to register a new worker and assign their position</p>
-        </div>
-          <div className="bg-gray-800  p-6">
-       
-            
-            <form className="space-y-5">
-              {/* Personal Information */}
+          <div className="bg-teal-600 dark:bg-teal-700 p-4 text-white rounded">
+            <h2 className="text-xl font-bold mb-4">Register New Worker</h2>
+            <p className="text-sm mb-4">Fill out the form to register a new worker and assign their position</p>
+          </div>
+          <div className="bg-gray-800 p-6">
+            <form onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <div className="mb-3 flex items-center gap-2">
                   <span className="bg-gray-700 p-2 rounded-full">
@@ -42,50 +91,65 @@ export default function WorkerForm() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="firstName" className="block text-sm text-gray-400 mb-1">
-                      First Name
+                      First Name *
                     </label>
                     <input
                       type="text"
                       id="firstName"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleChange}
                       className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+                      required
                     />
                   </div>
                   <div>
                     <label htmlFor="lastName" className="block text-sm text-gray-400 mb-1">
-                      Last Name
+                      Last Name *
                     </label>
                     <input
                       type="text"
                       id="lastName"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleChange}
                       className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+                      required
                     />
                   </div>
                 </div>
                 
                 <div className="mt-3">
                   <label htmlFor="email" className="block text-sm text-gray-400 mb-1">
-                    Email Address
+                    Email Address *
                   </label>
                   <input
                     type="email"
                     id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
                     className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    required
                   />
                 </div>
                 
                 <div className="mt-3">
                   <label htmlFor="phone" className="block text-sm text-gray-400 mb-1">
-                    Phone Number
+                    Phone Number *
                   </label>
                   <input
                     type="tel"
                     id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
                     className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    required
                   />
                 </div>
               </div>
               
-              {/* Employment Details */}
               <div>
                 <div className="mb-3 flex items-center gap-2">
                   <span className="bg-gray-700 p-2 rounded-full">
@@ -98,46 +162,42 @@ export default function WorkerForm() {
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                 <div>
-
-                 <label htmlFor="department" className="block text-sm text-gray-400 mb-1">
-                      Department
-                    </label>
-                    <div className="relative">
-                      <select
-                        id="department"
-                        className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500 appearance-none"
-                      >
-                        <option value="">Select a department</option>
-                        <option value="Cleaning">Cleaning</option>
-                        <option value="Water">Water</option>
-                        <option value="maintenance">maintenance</option>
-                        <option value="Other">Other</option>
-                      </select>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
-                        <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                        </svg>
-                      </div>
-                    </div>
-                 </div>
                   <div>
-                  <label htmlFor="startDate" className="block text-sm text-gray-400 mb-1">
-                    Start Date
-                  </label>
-                  <input
-                    type="date"
-                    id="startDate"
-                    className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
-                  />
+                    <label htmlFor="department" className="block text-sm text-gray-400 mb-1">
+                      Department *
+                    </label>
+                    <select
+                      id="department"
+                      name="department"
+                      value={formData.department}
+                      onChange={handleChange}
+                      className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+                      required
+                    >
+                     <option value="">Select a department</option> {/* Placeholder option */}
+                      <option value="cleaning">Cleaning</option>
+                      <option value="water">Water</option>
+                      <option value="maintenance">Maintenance</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label htmlFor="startDate" className="block text-sm text-gray-400 mb-1">
+                      Start Date *
+                    </label>
+                    <input
+                      type="date"
+                      id="startDate"
+                      name="startDate"
+                      value={formData.startDate}
+                      onChange={handleChange}
+                      className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+                      required
+                    />
                   </div>
                 </div>
-            
-                
-             
               </div>
               
-              {/* Additional Information */}
               <div>
                 <div className="mb-3 flex items-center gap-2">
                   <span className="bg-gray-700 p-2 rounded-full">
@@ -148,93 +208,125 @@ export default function WorkerForm() {
                   <h3 className="text-md font-medium">Additional Information</h3>
                 </div>
                 
-                
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-  <div>
-    <label htmlFor="preferredShift" className="block text-sm text-gray-400 mb-1">
-      Preferred Shift
-    </label>
-    <select
-      id="preferredShift"
-      className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500 appearance-none"
-    >
-      <option value="">Select shift</option>
-      <option value="Morning">Morning</option>
-      <option value="Evening">Evening</option>
-      <option value="Night">Night</option>
-    </select>
-  </div>
-  <div>
-    <label htmlFor="gender" className="block text-sm text-gray-400 mb-1">
-      Gender
-    </label>
-    <select
-      id="gender"
-      className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500 appearance-none"
-    >
-      <option value="">Select gender</option>
-      <option value="Male">Male</option>
-      <option value="Female">Female</option>
-      <option value="Other">Other</option>
-    </select>
-  </div>
-</div>
+                  <div>
+                    <label htmlFor="shift" className="block text-sm text-gray-400 mb-1">
+                      Shift *
+                    </label>
+                    <select
+                      id="shift"
+                      name="shift"
+                      value={formData.shift}
+                      onChange={handleChange}
+                      className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+                      required
+                    >
+                       <option value="">Select preferrred shift</option> {/* Placeholder option */}
+                      <option value="morning">Morning</option>
+                      <option value="evening">Evening</option>
+                      <option value="night">Night</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label htmlFor="gender" className="block text-sm text-gray-400 mb-1">
+                      Gender *
+                    </label>
+                    <select
+                      id="gender"
+                      name="gender"
+                      value={formData.gender}
+                      onChange={handleChange}
+                      className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+                      required
+                    >
+                       <option value="">Select gender</option> {/* Placeholder option */}
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                </div>
 
-<div className="mt-3">
-  <label htmlFor="age" className="block text-sm text-gray-400 mb-1">
-    Age
-  </label>
-  <input
-    type="number"
-    id="age"
-    className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
-  />
-</div>
-
-                
-                <div className="mt-3 flex items-center">
-                  <input
-                    id="emergency"
-                    type="checkbox"
-                    className="h-4 w-4 text-teal-500 focus:ring-teal-500 bg-gray-700 border-gray-600 rounded"
-                  />
-                  <label htmlFor="emergency" className="ml-2 block text-sm text-gray-300">
-                    Available for emergency response
+                <div className="mt-3">
+                  <label htmlFor="age" className="block text-sm text-gray-400 mb-1">
+                    Age *
                   </label>
+                  <input
+                    type="number"
+                    id="age"
+                    name="age"
+                    value={formData.age}
+                    onChange={handleChange}
+                    className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    required
+                  />
+                </div>
+
+                <div className="mt-3">
+                  <label htmlFor="emergencyResponder" className="block text-sm text-gray-400 mb-1">
+                    Emergency Responder *
+                  </label>
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="emergencyResponder"
+                      name="emergencyResponder"
+                      checked={formData.emergencyResponder}
+                      onChange={handleChange}
+                      className="w-5 h-5 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    />
+                    <span className="ml-2">Yes</span>
+                  </div>
                 </div>
               </div>
               
               <div>
-                  <label htmlFor="notes" className="block text-sm text-gray-400 mb-1">
-                    Notes (Optional)
-                  </label>
-                  <textarea
-                    id="notes"
-                    rows={3}
-                    placeholder="Provide any additional details about the worker"
-                    className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
-                  ></textarea>
-                </div>
+                <label htmlFor="additionalDetails" className="block text-sm text-gray-400 mb-1">
+                  Additional Details
+                </label>
+                <textarea
+                  id="additionalDetails"
+                  name="additionalDetails"
+                  value={formData.additionalDetails}
+                  onChange={handleChange}
+                  rows={3}
+                  placeholder="Provide any additional details about the worker"
+                  className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+                />
+              </div>
               
-                
-                
-              {/* Submit Section */}
               <div className="pt-4">
                 <div className="text-sm text-gray-400 mb-4">
-                  You'll assign all necessary credentials and permissions upon submission.
+                  Fields marked with * are required
                 </div>
                 <div className="flex justify-end space-x-3">
                   <button
                     type="button"
+                    onClick={() => setFormData({
+                      firstName: '',
+                      lastName: '',
+                      email: '',
+                      phone: '',
+                      department: 'cleaning',
+                      startDate: '',
+                      shift: 'morning',
+                      gender: 'male',
+                      age: '',
+                      emergencyResponder: false,
+                      additionalDetails: ''
+                    })}
                     className="px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
                   >
-                    Cancel
+                    Reset
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    disabled={isLoading}
+                    className={`px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 ${
+                      isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
                   >
-                    Register Worker
+                    {isLoading ? 'Registering...' : 'Register Worker'}
                   </button>
                 </div>
               </div>
@@ -242,7 +334,6 @@ export default function WorkerForm() {
           </div>
         </div>
         
-        {/* How It Works Section - Takes 1/3 of the space */}
         <div className="lg:col-span-1">
           <div className="bg-gray-800 rounded-lg p-6">
             <h2 className="text-xl font-bold mb-4">How Worker Registration Works</h2>
@@ -301,6 +392,6 @@ export default function WorkerForm() {
           </div>
         </div>
       </div>
-    </div>
+    </div> 
   );
 }
