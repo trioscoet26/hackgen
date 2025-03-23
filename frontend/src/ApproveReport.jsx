@@ -14,8 +14,8 @@ const ApproveReport = () => {
       setError(null);
       try {
         const [usersResponse, reportsResponse] = await Promise.all([
-          fetch(`${API_URL}/allusers`),
-          fetch(`${API_URL}/charts`),
+          fetch(`${API_URL}allusers`),
+          fetch(`${API_URL}charts`),
         ]);
 
         if (!usersResponse.ok || !reportsResponse.ok) {

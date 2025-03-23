@@ -3,7 +3,9 @@ import Charts from "./charts";
 import ApproveReport from "./ApproveReport";
 import CreateListing from "./CreateListing";
 import History from "./History";
-import { BarChart2, FileText, ShoppingBag, Map, Menu, X } from "lucide-react";
+import DisplayAllWorkers from "./displayAllWorkers";
+import { BarChart2, FileText, ShoppingBag, Map, Menu, X, HardHat } from "lucide-react";
+
 
 function Sidebar({ setActiveComponent }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,6 +15,7 @@ function Sidebar({ setActiveComponent }) {
     { icon: FileText, text: "Reports", component: "ApproveReport" },
     { icon: ShoppingBag, text: "Marketplace", component: "Marketplace" },
     { icon: Map, text: "Purchase History", component: "History" },
+    {icon: HardHat, text: "Workers", component: "DisplayAllWorkers"}
   ];
 
   const toggleSidebar = () => setIsOpen((prev) => !prev);
@@ -80,6 +83,7 @@ const AdminDashboard = () => {
           {activeComponent === "ApproveReport" && <ApproveReport />}
           {activeComponent === "Marketplace" && <CreateListing />}
           {activeComponent === "History" && <History />}
+          {activeComponent=== "DisplayAllWorkers" && <DisplayAllWorkers />}
         </main>
       </div>
     </div>
