@@ -182,8 +182,8 @@ const handleRemove = async (workerId) => {
       {/* Edit Modal */}
       {isEditModalOpen && selectedWorker && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-          <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4 text-white">Edit Worker</h2>
+          <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <h2 className="text-xl font-bold mb-4 text-white text-center">Edit Worker</h2>
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
                 {/* Disabled Fields */}
