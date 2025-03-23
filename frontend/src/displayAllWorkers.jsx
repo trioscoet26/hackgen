@@ -161,7 +161,7 @@ const handleRemove = async (workerId) => {
               <td className="p-3 border border-gray-600 text-center">
                 <button
                   onClick={() => handleEdit(worker._id)} 
-                  className="text-teal-400 hover:text-teal-300"
+                  className="text-teal-400 hover:text-teal-300 cursor-pointer"
                 >
                   <Edit size={18} />
                 </button>
@@ -169,7 +169,7 @@ const handleRemove = async (workerId) => {
               <td className="p-3 border border-gray-600 text-center">
                 <button
                   onClick={() => handleRemove(worker._id)} 
-                  className="text-red-400 hover:text-red-300"
+                  className="text-red-400 hover:text-red-300 cursor-pointer"
                 >
                   <Trash2 size={18} />
                 </button>
