@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { toast } from 'react-hot-toast';
 
 export default function WorkerForm() {
   const url = import.meta.env.VITE_API_URL;
@@ -11,11 +10,12 @@ export default function WorkerForm() {
     email: '',
     phone: '',
     department: '',
+    location: '', 
     startDate: '',
     shift: '',
     gender: '',
     age: '',
-    emergencyResponder: false, // Boolean field
+    emergencyResponder: false,
     additionalDetails: ''
   });
 
@@ -41,6 +41,7 @@ export default function WorkerForm() {
             email: '',
             phone: '',
             department: '',
+            location: '',
             startDate: '',
             shift: '',
             gender: '',
@@ -174,7 +175,7 @@ export default function WorkerForm() {
                       className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
                       required
                     >
-                     <option value="">Select a department</option> {/* Placeholder option */}
+                      <option value="">Select a department</option> {/* Placeholder option */}
                       <option value="cleaning">Cleaning</option>
                       <option value="water">Water</option>
                       <option value="maintenance">Maintenance</option>
@@ -182,19 +183,35 @@ export default function WorkerForm() {
                     </select>
                   </div>
                   <div>
-                    <label htmlFor="startDate" className="block text-sm text-gray-400 mb-1">
-                      Start Date *
-                    </label>
-                    <input
-                      type="date"
-                      id="startDate"
-                      name="startDate"
-                      value={formData.startDate}
-                      onChange={handleChange}
-                      className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
-                      required
-                    />
-                  </div>
+  <label htmlFor="location" className="block text-sm text-gray-400 mb-1">
+    Working Location *
+  </label>
+  <input
+    type="text"
+    id="location"
+    name="location"
+    value={formData.location}
+    onChange={handleChange}
+    className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+    placeholder="Enter working location"
+    required
+  />
+</div>
+                </div>
+                
+                <div className="mt-3">
+                  <label htmlFor="startDate" className="block text-sm text-gray-400 mb-1">
+                    Start Date *
+                  </label>
+                  <input
+                    type="date"
+                    id="startDate"
+                    name="startDate"
+                    value={formData.startDate}
+                    onChange={handleChange}
+                    className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    required
+                  />
                 </div>
               </div>
               
@@ -221,7 +238,7 @@ export default function WorkerForm() {
                       className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
                       required
                     >
-                       <option value="">Select preferrred shift</option> {/* Placeholder option */}
+                      <option value="">Select preferrred shift</option> {/* Placeholder option */}
                       <option value="morning">Morning</option>
                       <option value="evening">Evening</option>
                       <option value="night">Night</option>
@@ -239,7 +256,7 @@ export default function WorkerForm() {
                       className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
                       required
                     >
-                       <option value="">Select gender</option> {/* Placeholder option */}
+                      <option value="">Select gender</option> {/* Placeholder option */}
                       <option value="male">Male</option>
                       <option value="female">Female</option>
                       <option value="other">Other</option>
@@ -307,10 +324,11 @@ export default function WorkerForm() {
                       lastName: '',
                       email: '',
                       phone: '',
-                      department: 'cleaning',
+                      department: '',
+                      location: '',
                       startDate: '',
-                      shift: 'morning',
-                      gender: 'male',
+                      shift: '',
+                      gender: '',
                       age: '',
                       emergencyResponder: false,
                       additionalDetails: ''

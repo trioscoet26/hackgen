@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Edit, Trash2 } from "lucide-react";
 
 const DisplayAllWorkers = () => {
-    const url = import.meta.env.VITE_API_URL;
+  const url = import.meta.env.VITE_API_URL;
   const [workers, setWorkers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -43,7 +43,7 @@ const DisplayAllWorkers = () => {
 
   // Handle edit action
   const handleEdit = (workerId) => {
-    const worker = workers.find((w) => w._id === workerId); // Changed to _id
+    const worker = workers.find((w) => w._id === workerId);
     setSelectedWorker(worker);
     setIsEditModalOpen(true);
   };
@@ -54,7 +54,7 @@ const DisplayAllWorkers = () => {
 
     try {
       const response = await fetch(
-        `${url}worker/${selectedWorker._id}`, // Changed to _id
+        `${url}worker/${selectedWorker._id}`,
         {
           method: "PUT",
           headers: {
@@ -63,6 +63,7 @@ const DisplayAllWorkers = () => {
           body: JSON.stringify({
             department: selectedWorker.department,
             shift: selectedWorker.shift,
+            location: selectedWorker.location // Add location to the update payload
           }),
         }
       );
@@ -79,8 +80,8 @@ const DisplayAllWorkers = () => {
     }
   };
 
- // Handle remove action
-const handleRemove = async (workerId) => {
+  // Handle remove action
+  const handleRemove = async (workerId) => {
     try {
       const response = await fetch(`${url}worker/${workerId}`, {
         method: "DELETE",
@@ -131,6 +132,7 @@ const handleRemove = async (workerId) => {
             <th className="p-3 border border-gray-700 text-white">Email</th>
             <th className="p-3 border border-gray-700 text-white">Phone</th>
             <th className="p-3 border border-gray-700 text-white">Department</th>
+            <th className="p-3 border border-gray-700 text-white">Location</th>
             <th className="p-3 border border-gray-700 text-white">Start Date</th>
             <th className="p-3 border border-gray-700 text-white">Shift</th>
             <th className="p-3 border border-gray-700 text-white">Gender</th>
@@ -143,13 +145,14 @@ const handleRemove = async (workerId) => {
         </thead>
         <tbody>
           {workers.map((worker) => (
-            <tr key={worker._id} className="bg-gray-700 hover:bg-gray-600"> {/* Changed to _id */}
-              <td className="p-3 border border-gray-600 text-white">{worker._id}</td> {/* Changed to _id */}
+            <tr key={worker._id} className="bg-gray-700 hover:bg-gray-600">
+              <td className="p-3 border border-gray-600 text-white">{worker._id}</td>
               <td className="p-3 border border-gray-600 text-white">{worker.firstName}</td>
               <td className="p-3 border border-gray-600 text-white">{worker.lastName}</td>
               <td className="p-3 border border-gray-600 text-white">{worker.email}</td>
               <td className="p-3 border border-gray-600 text-white">{worker.phone}</td>
               <td className="p-3 border border-gray-600 text-white">{worker.department}</td>
+              <td className="p-3 border border-gray-600 text-white">{worker.location || "Not specified"}</td>
               <td className="p-3 border border-gray-600 text-white">{worker.startDate}</td>
               <td className="p-3 border border-gray-600 text-white">{worker.shift}</td>
               <td className="p-3 border border-gray-600 text-white">{worker.gender}</td>
@@ -286,6 +289,18 @@ const handleRemove = async (workerId) => {
                     <option value="other">Other</option>
                   </select>
                 </div>
+                <div>
+  <label className="block text-sm font-medium text-gray-300">Location</label>
+  <input
+    type="text"
+    value={selectedWorker.location || ""}
+    onChange={(e) =>
+      setSelectedWorker({ ...selectedWorker, location: e.target.value })
+    }
+    placeholder="Enter location"
+    className="w-full bg-gray-700 text-gray-300 rounded-md p-2 mt-1"
+  />
+</div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300">Shift</label>
                   <select

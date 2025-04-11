@@ -36,12 +36,12 @@ export const addWorker = async (req, res) => {
 
 export const updateWorker = async (req, res) => {
     try {
-        const { department, shift } = req.body;
+        const { department, shift , location} = req.body;
         const { id } = req.params; // Get ID from URL parameter
 
         const updatedWorker = await Worker.findByIdAndUpdate(
             id, // Use req.params.id instead of req.body.id
-            { department, shift },
+            { department, shift , location },
             { new: true } // Return the updated document
         );
 
