@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 import Worker from './Models/Worker.js';
 import { Task } from './taskModel.js';
 import connectDB from './config/db.js';
+import { notifyWorkerBoth } from './twilioService.js';
+
 
 // Use the shared connection instead of connecting again
 async function ensureConnection() {
@@ -181,6 +183,9 @@ async function assignTasks() {
   // Start a session for transaction support
   const session = await mongoose.startSession();
   
+  // Store notification tasks to be executed after transaction completion
+  const notificationQueue = [];
+  
   try {
     // Start a transaction
     session.startTransaction();
@@ -300,12 +305,54 @@ async function assignTasks() {
         await worker.save({ session });
 
         console.log(`🧹 Assigned Task ${task._id} (${task.department} - ${task.severity}) to ${worker.firstName} (${worker.email}) (${worker.phone}) (${worker._id})`);
+        
+        notificationQueue.push({
+          workerPhone: worker.phone,
+          worker: {
+            firstName: worker.firstName,
+            _id: worker._id.toString()
+          },
+          task: {
+            _id: task._id.toString(),
+            department: task.department,
+            severity: task.severity,
+            priority: task.priority,
+            location: task.location || 'Not specified'
+          }
+        });
       }
     }
 
     // Commit the transaction
     await session.commitTransaction();
     console.log('✅ Task assignment completed successfully');
+    
+    // Now that the transaction is committed, process the notification queue
+    for (const notification of notificationQueue) {
+      try {
+        console.log(`🔔 Sending notifications to ${notification.worker.firstName} at ${notification.workerPhone}`);
+        const notificationResults = await notifyWorkerBoth(
+          notification.workerPhone,
+          notification.task,
+          notification.worker
+        );
+        
+        // Log notification results
+        if (notificationResults.sms) {
+          console.log(`📱 SMS notification sent successfully (SID: ${notificationResults.sms.sid})`);
+        }
+        if (notificationResults.call) {
+          console.log(`📞 Call notification sent successfully (SID: ${notificationResults.call.sid})`);
+        }
+        if (notificationResults.errors.length > 0) {
+          console.warn(`⚠️ Some notifications failed for ${notification.worker.firstName}:`, 
+            notificationResults.errors.map(e => e.type).join(', '));
+        }
+      } catch (error) {
+        console.error(`❌ Failed to notify worker ${notification.worker.firstName}:`, error);
+        // Continue with other notifications
+      }
+    }
     
   } catch (error) {
     // If an error occurs, abort the transaction
